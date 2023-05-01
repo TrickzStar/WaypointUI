@@ -2,3 +2,9 @@ name: WaypointUI
 version: '${project.version}'
 main: com.github.trickzstar.waypointui.WaypointUI
 api-version: 1.19
+author: Kiku
+
+commands:
+  wp:
+    description: Global Waypoint Command
+    usage: /wp [pos]
