@@ -29,25 +29,27 @@ public class WaypointCommand implements CommandExecutor {
                 return true;
             } else if (args[0].equalsIgnoreCase("open")) {
 
-                FileManager.CreateFile(p);
                 Inventory pInv = Bukkit.createInventory(null, 9, "Waypoint Inventory");
-
                 ItemStack stack = new ItemStack(Material.COBBLESTONE);
-                ItemMeta meta = stack.getItemMeta();
-                if(meta != null)
-                {
-                    FileManager.LoadFile(p, meta);
-                    stack.setItemMeta(meta);
-                    pInv.setItem(1, stack);
+
+                if (!FileManager.CreateFile(p)) {
+                    for (int i = 0; i < pInv.getSize(); i++) {
+                        pInv.setItem(i, new ItemStack(Material.COBBLESTONE));
+                    }
+                } else {
+                    ItemMeta meta = stack.getItemMeta();
+                    if (meta != null) {
+                        FileManager.LoadFile(p, stack);
+//                      stack.setItemMeta(meta);
+                        pInv.setItem(1, stack);
+                    }
                 }
+
                 p.openInventory(pInv);
                 return true;
             }
-
-
             return true;
         }
-
         return true;
     }
 }

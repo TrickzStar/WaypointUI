@@ -5,6 +5,7 @@ import com.github.trickzstar.waypointui.WaypointUI;
 import com.github.trickzstar.waypointui.persistentdata.CustomLocationData;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 
@@ -48,7 +50,7 @@ public class InventoryClickListener implements Listener {
                     lore.add(ChatColor.BLUE + "Z: "     + ChatColor.RESET + playerLocation.getZ());
                     meta.setLore(lore);
                     event.getCurrentItem().setItemMeta(meta);
-                    FileManager.SaveFile(player, meta);
+                    FileManager.SaveFile(player, inv);
                 }
             }
             event.setCancelled(true);
