@@ -10,7 +10,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class WaypointCommand implements CommandExecutor {
 
@@ -30,19 +29,17 @@ public class WaypointCommand implements CommandExecutor {
             } else if (args[0].equalsIgnoreCase("open")) {
 
                 Inventory pInv = Bukkit.createInventory(null, 9, "Waypoint Inventory");
-                ItemStack stack = new ItemStack(Material.COBBLESTONE);
 
                 if (!FileManager.CreateFile(p)) {
                     for (int i = 0; i < pInv.getSize(); i++) {
                         pInv.setItem(i, new ItemStack(Material.COBBLESTONE));
                     }
                 } else {
-                    ItemMeta meta = stack.getItemMeta();
-                    if (meta != null) {
-                        FileManager.LoadFile(p, stack);
-//                      stack.setItemMeta(meta);
-                        pInv.setItem(1, stack);
+                    for(int i = 0; i < pInv.getSize(); i++) {
+                        pInv.setItem(i, new ItemStack(Material.COBBLESTONE));
                     }
+
+                    FileManager.LoadFile(p, pInv);
                 }
 
                 p.openInventory(pInv);

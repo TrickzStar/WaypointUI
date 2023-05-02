@@ -5,7 +5,6 @@ import com.github.trickzstar.waypointui.WaypointUI;
 import com.github.trickzstar.waypointui.persistentdata.CustomLocationData;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,7 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 
@@ -30,27 +28,35 @@ public class InventoryClickListener implements Listener {
         Inventory inv = event.getView().getTopInventory();
         InventoryView invView = event.getView();
 
-        if(invView.getTitle().equals("Waypoint Inventory"))
-        {
-            if(event.getClick().isLeftClick())
-            {
-                ItemMeta meta = Objects.requireNonNull(event.getCurrentItem()).getItemMeta();
+        if (invView.getTitle().equals("Waypoint Inventory")) {
+            if (event.getClick().isLeftClick()) {
+                if (event.getCurrentItem() != null) {
+                    ItemMeta meta = event.getCurrentItem().getItemMeta();
+                    if (meta != null) {
+                        PersistentDataContainer dataContainer = meta.getPersistentDataContainer();
+                        NamespacedKey key = new NamespacedKey(WaypointUI.GetInstance(), "crate");
 
-                if(meta != null)
-                {
-                    PersistentDataContainer dataContainer = meta.getPersistentDataContainer();
-                    NamespacedKey key = new NamespacedKey(WaypointUI.GetInstance(), "crate");
+                        Location playerLocation = player.getLocation();
+                        dataContainer.set(key, new CustomLocationData(), playerLocation);
+                        List<String> lore = new ArrayList<>();
+                        lore.add(ChatColor.BLUE + "World: " + ChatColor.RESET + Objects.requireNonNull(playerLocation.getWorld()).getName());
+                        lore.add(ChatColor.BLUE + "X: " + ChatColor.RESET + playerLocation.getX());
+                        lore.add(ChatColor.BLUE + "Y: " + ChatColor.RESET + playerLocation.getY());
+                        lore.add(ChatColor.BLUE + "Z: " + ChatColor.RESET + playerLocation.getZ());
+                        meta.setLore(lore);
+                        event.getCurrentItem().setItemMeta(meta);
+                        FileManager.SaveFile(player, inv);
+                    }
+                } else if (event.isRightClick()) {
+                    ItemMeta meta = Objects.requireNonNull(event.getCurrentItem()).getItemMeta();
+                    if (meta != null) {
+                        Location locData = meta.getPersistentDataContainer().get(new NamespacedKey(WaypointUI.GetInstance(), "crate"),
+                                new CustomLocationData());
 
-                    Location playerLocation = player.getLocation();
-                    dataContainer.set(key, new CustomLocationData(), playerLocation);
-                    List<String> lore = new ArrayList<>();
-                    lore.add(ChatColor.BLUE + "World: " + ChatColor.RESET + Objects.requireNonNull(playerLocation.getWorld()).getName());
-                    lore.add(ChatColor.BLUE + "X: "     + ChatColor.RESET + playerLocation.getX());
-                    lore.add(ChatColor.BLUE + "Y: "     + ChatColor.RESET + playerLocation.getY());
-                    lore.add(ChatColor.BLUE + "Z: "     + ChatColor.RESET + playerLocation.getZ());
-                    meta.setLore(lore);
-                    event.getCurrentItem().setItemMeta(meta);
-                    FileManager.SaveFile(player, inv);
+                        if (locData != null) {
+                            player.teleport(locData);
+                        }
+                    }
                 }
             }
             event.setCancelled(true);
