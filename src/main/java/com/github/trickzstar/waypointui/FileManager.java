@@ -85,6 +85,21 @@ public class FileManager {
         }
     }
 
+    public static void SaveSlot(Player player, ItemStack item, int slotID) {
+        File file = new File(playerFilePath + player.getName() + ".yml");
+        YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+
+        if(item.getItemMeta() != null) {
+            cfg.set("Slot." + slotID + ".ItemStack", item);
+        }
+
+        try {
+            cfg.save(file);
+        } catch (IOException e) {
+            Bukkit.getConsoleSender().sendMessage("[ERROR]: " + e.getMessage());
+        }
+    }
+
     public static boolean CreateFile(Player player) {
         File playerFile = new File(playerFilePath + player.getName() + ".yml");
         YamlConfiguration cfg = YamlConfiguration.loadConfiguration(playerFile);
